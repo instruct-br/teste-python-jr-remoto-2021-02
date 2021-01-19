@@ -21,7 +21,7 @@ Compreendendo também que contratos podem ser cancelados, a Vough espera poder a
 
 Para atender a essa necessidade, você deve desenvolver uma API que apresente os seguintes dados do Github das organizações:
 
-- Nome, companhia, localização, descrição e nomes dos repositórios públicos de cada organização;
+- Nome, companhia, localização, descrição, nomes dos repositórios públicos e quantidade de repositórios públicos de cada organização;
 - Um top 3 repositórios de cada organização, contendo seus respectivos nomes, número de estrelas e de forks e a classificação dele.
 
 __Atenção__: a sua aplicação deve obrigatoriamente utilizar a [API Rest do Github](https://docs.github.com/pt/free-pro-team@latest/rest) para coletar as informações referentes às organizações.
