@@ -26,6 +26,12 @@ Para atender a essa necessidade, você deve desenvolver uma API que apresente os
 
 __Atenção__: a sua aplicação deve obrigatoriamente utilizar a [API Rest do Github](https://docs.github.com/pt/free-pro-team@latest/rest) para coletar as informações referentes às organizações.
 
+A API deverá seguir o seguinte padrão de endpoint:
+```
+/orgs/<nome-org>/
+```
+Onde `nome-org` é obrigatório para recuperar as infos de uma organização ou deletá-la da base da dados.
+
 Adiante, organizamos em tópicos os principais requisitos esperados em sua aplicação e exemplos de como cumpri-los.
 
 ### Recuperar informações da organização
