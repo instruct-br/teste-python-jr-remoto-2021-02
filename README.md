@@ -21,8 +21,8 @@ Compreendendo também que contratos podem ser cancelados, a Vough espera poder a
 
 Para atender a essa necessidade, você deve desenvolver uma API que apresente os seguintes dados do Github das organizações:
 
-- Nome, companhia, localização, descrição, nomes dos repositórios públicos e quantidade de repositórios públicos de cada organização;
-- Um top 3 repositórios de cada organização, contendo seus respectivos nomes, número de issues e de pull requests e a classificação dele.
+- Nome e slug de cada organização;
+- Um top 3 repositórios de cada organização, contendo seus respectivos nomes, número de issues e de pull requests e a classificação deles.
 
 __Atenção__: a sua aplicação deve obrigatoriamente utilizar a [API Rest do Github](https://docs.github.com/pt/free-pro-team@latest/rest) para coletar as informações referentes às organizações.
 
@@ -30,7 +30,7 @@ A API deverá seguir o seguinte padrão de endpoint:
 ```
 /orgs/<nome-org>/
 ```
-Onde `nome-org` é obrigatório para recuperar as infos de uma organização ou deletá-la da base da dados.
+Onde `nome-org` é obrigatório para recuperar as infos de uma organização ou deletá-la da base de dados.
 
 Adiante, organizamos em tópicos os principais requisitos esperados em sua aplicação e exemplos de como cumpri-los.
 
@@ -39,9 +39,10 @@ Adiante, organizamos em tópicos os principais requisitos esperados em sua aplic
 Deve existir um endpoint onde o usuário insira o nome da organização e receba os dados sobre ela.
 
 Deve ser possível filtrar por um intervalo de tempo as informações da organização.
+
 Padrão da _query string_: `?initial_date=YYYY-MM-DD&end_date=YYYY-MM-DD`
 
-Se não for passado o filtro de data a API deve pegar as informações da organização entre 2020-07-01 à 2020-12-31.
+Se não for passado o filtro de data, a API deve pegar as informações da organização entre 01/07/2020 e 31/12/2020.
 
 Ex.: busca de informações da organização instruct-br
 ```
@@ -65,7 +66,7 @@ Ainda, para definir o top 3 de repositórios, considere que a popularidade de um
 
 A aplicação também deve fazer o cache das informações encontradas na API do Github e salvar em um banco de dados no momento em que a organização é consultada.
 
-Se a organização já tiver sido consultada e for fazer uma segunda consulta a aplicação deve retornar o cache das informações já salvas no banco, para atualizar as infos o usuário precisa apaga-las via API e depois efetuar a nova consulta.
+Se a organização já tiver sido consultada e for fazer uma segunda consulta, a aplicação deve retornar o cache das informações já salvas no banco. Para atualizar as infos, o usuário precisa apagá-las via API e depois efetuar a nova consulta.
 
 Se a organização consultada não existir no Github, deve retornar um erro.
 
