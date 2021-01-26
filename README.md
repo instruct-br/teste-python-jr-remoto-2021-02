@@ -22,7 +22,7 @@ Compreendendo também que contratos podem ser cancelados, a Vough espera poder a
 Para atender a essa necessidade, você deve desenvolver uma API que apresente os seguintes dados do Github das organizações:
 
 - Nome, companhia, localização, descrição, nomes dos repositórios públicos e quantidade de repositórios públicos de cada organização;
-- Um top 3 repositórios de cada organização, contendo seus respectivos nomes, número de estrelas e de forks e a classificação dele.
+- Um top 3 repositórios de cada organização, contendo seus respectivos nomes, número de issues e de pull requests e a classificação dele.
 
 __Atenção__: a sua aplicação deve obrigatoriamente utilizar a [API Rest do Github](https://docs.github.com/pt/free-pro-team@latest/rest) para coletar as informações referentes às organizações.
 
@@ -55,8 +55,8 @@ GET /orgs/instruct-br/
     "top_3_repos": [
         {
             "name": "repo_1",
-            "stargazers_count": 15,
-            "forks_count": 2,
+            "issues_count": 15,
+            "pulls_count": 2,
             "rating": 1
         },
         ...
@@ -65,7 +65,7 @@ GET /orgs/instruct-br/
 ```
   
 
-Ainda, para definir o top 3 de repositórios, considere que a popularidade de um repositório é definida pelo número de estrelas e pelo número de forks. Os pesos são os seguintes: o fork tem peso 2 e a estrela peso 1 (forks_count * 2 + stargazers_count).
+Ainda, para definir o top 3 de repositórios, considere que a popularidade de um repositório é definida pelo número de pull requests e pelo número de issues. Os pesos são os seguintes: o pull request tem peso 2 e a issue peso 1 (pulls_count * 2 + issues_count).
 
 A aplicação também deve fazer o cache das informações encontradas na API do Github e salvar em um banco de dados no momento em que a organização é consultada.
 
@@ -95,8 +95,8 @@ GET /orgs/
         "top_3_repos": [
             {
                 "name": "repo_1",
-                "stargazers_count": 15,
-                "forks_count": 2,
+                "issues_count": 15,
+                "pulls_count": 2,
                 "rating": 1
             },
             ...
