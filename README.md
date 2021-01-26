@@ -38,36 +38,34 @@ Adiante, organizamos em tópicos os principais requisitos esperados em sua aplic
 
 Deve existir um endpoint onde o usuário insira o nome da organização e receba os dados sobre ela.
 
+Deve ser possível filtrar por um intervalo de tempo as informações da organização.
+Padrão da _query string_: `?initial_date=YYYY-MM-DD&end_date=YYYY-MM-DD`
+
+Se não for passado o filtro de data a API deve pegar as informações da organização entre 2020-07-01 à 2020-12-31.
+
 Ex.: busca de informações da organização instruct-br
 ```
-GET /orgs/instruct-br/
+GET /orgs/instruct-br/?initial_date=2021-01-01&end_date=2021-01-15
 {
-    "name": "instruct-br",
-    "company": "Instruct",
-    "location": "Brazil",
-    "description": "",
-    "public_repos": [
-        "nameko-reloader",
-        "nameko-vault",
-        ...
-    ],
-    "public_repos_count": 47,
-    "top_3_repos": [
-        {
-            "name": "repo_1",
-            "issues_count": 15,
-            "pulls_count": 2,
-            "rating": 1
-        },
-        ...
-    ]
+  "name": "Instruct",
+  "slug": "instruct-br",
+  "top_3_repositories": [
+    {
+      "name": "repo_1",
+      "issues_count": 15,
+      "pulls_count": 2,
+      "rating": 1
+    },
+    ...
+  ]
 }
 ```
-  
 
 Ainda, para definir o top 3 de repositórios, considere que a popularidade de um repositório é definida pelo número de pull requests e pelo número de issues. Os pesos são os seguintes: o pull request tem peso 2 e a issue peso 1 (pulls_count * 2 + issues_count).
 
 A aplicação também deve fazer o cache das informações encontradas na API do Github e salvar em um banco de dados no momento em que a organização é consultada.
+
+Se a organização já tiver sido consultada e for fazer uma segunda consulta a aplicação deve retornar o cache das informações já salvas no banco, para atualizar as infos o usuário precisa apaga-las via API e depois efetuar a nova consulta.
 
 Se a organização consultada não existir no Github, deve retornar um erro.
 
@@ -81,28 +79,20 @@ Ex.:
 ```
 GET /orgs/
 [
-    {
-        "name": "instruct-br",
-        "company": "Instruct",
-        "location": "Brazil",
-        "description": "",
-        "public_repos": [
-            "nameko-reloader",
-            "nameko-vault",
-            ...
-        ],
-        "public_repos_count": 25,
-        "top_3_repos": [
-            {
-                "name": "repo_1",
-                "issues_count": 15,
-                "pulls_count": 2,
-                "rating": 1
-            },
-            ...
-        ]
-    },
-    ...
+  {
+    "name": "Instruct",
+    "slug": "instruct-br",
+    "top_3_repositories": [
+      {
+        "name": "repo_1",
+        "issues_count": 15,
+        "pulls_count": 2,
+        "rating": 1
+      },
+      ...
+    ]
+  }
+  ...
 ]
 ```
 
