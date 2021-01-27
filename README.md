@@ -36,15 +36,17 @@ Adiante, organizamos em tópicos os principais requisitos esperados em sua aplic
 
 ### Recuperar informações da organização
 
-Deve existir um endpoint onde o usuário insira o nome da organização e receba os dados sobre ela.
-
-Deve ser possível filtrar por um intervalo de tempo as informações da organização.
+Deve existir um endpoint onde o usuário insira o nome da organização e receba os dados sobre ela. Além disso, deve ser possível filtrar por um intervalo de tempo as informações da organização.
 
 Padrão da _query string_: `?initial_date=YYYY-MM-DD&end_date=YYYY-MM-DD`
 
 Se não for passado o filtro de data, a API deve pegar as informações da organização entre 01/07/2020 e 31/12/2020.
 
-Ex.: busca de informações da organização instruct-br
+Assim que a primeira consulta a uma organização for realizada, a aplicação deve fazer o cache das informações encontradas na API do Github e salvar em um banco de dados.
+
+Já quando o usuário estiver consultando uma organização pela segunda vez, o filtro de data será ignorado e serão retornados os dados salvos no banco de dados (aqueles que foram salvos na primeira consulta à organização).
+
+Ex.: busca de informações da organização __instruct-br__
 ```
 GET /orgs/instruct-br/?initial_date=2021-01-01&end_date=2021-01-15
 {
@@ -64,13 +66,9 @@ GET /orgs/instruct-br/?initial_date=2021-01-01&end_date=2021-01-15
 
 Ainda, para definir o top 3 de repositórios, considere que a popularidade de um repositório é definida pelo número de pull requests e pelo número de issues. Os pesos são os seguintes: o pull request tem peso 2 e a issue peso 1 (pulls_count * 2 + issues_count).
 
-A aplicação também deve fazer o cache das informações encontradas na API do Github e salvar em um banco de dados no momento em que a organização é consultada.
-
-Se a organização já tiver sido consultada e for fazer uma segunda consulta, a aplicação deve retornar o cache das informações já salvas no banco. Para atualizar as infos, o usuário precisa apagá-las via API e depois efetuar a nova consulta.
-
 Se a organização consultada não existir no Github, deve retornar um erro.
 
-Atenção: se o usuário já consultou alguma organização, a aplicação não deve coletar os dados da API do Github, mas sim do banco de dados.
+__Atenção__: se o usuário já consultou alguma organização, a aplicação não deve coletar os dados da API do Github, mas sim do banco de dados. Para atualizar as informações da organização, o usuário precisa apagá-las via API e depois efetuar uma nova consulta com o filtro desejado.
 
 ### Listar organizações já consultadas
 
