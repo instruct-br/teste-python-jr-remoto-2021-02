@@ -62,7 +62,7 @@ export default () => {
     check(query3, {
       'Lista todas organizações no cache após executar delete': (r) => {
         let data = convertResponseJson(r);
-        return data.filter((d) => d.slug === 'instruct-br').length === 0;
+        return data.filter((d) => d.login === 'instruct-br').length === 0;
       },
     });
   });
