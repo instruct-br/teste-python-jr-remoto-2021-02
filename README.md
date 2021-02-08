@@ -7,111 +7,88 @@ Você provavelmente chegou aqui através da indicação de alguma pessoa da empr
 
 Caso tenha interesse em se candidatar para uma vaga da Instruct, siga as instruções no site: https://instruct.com.br/trabalhe-com-a-gente/
 
-Nessa página você encontra as vagas abertas atualmente e todos os detalhes de nosso processo seletivo. Se você não encontrou uma vaga que pareça adequada, confira a página novamente em um ou dois meses, ela é atualizada com certa frequência. 
+Nessa página você encontra as vagas abertas atualmente e todos os detalhes de nosso processo seletivo. Se você não encontrou uma vaga que pareça adequada, confira a página novamente em um ou dois meses, ela é atualizada com certa frequência.
 
 ## PROBLEMA
 
-A companhia de marketing Vough tem trabalhado cada vez mais para empresas de tecnologia que disponibilizam código aberto. 
+A companhia de marketing Vough tem trabalhado cada vez mais para empresas de tecnologia que disponibilizam código aberto.
 
-Por conta disso, para ter um controle maior de suas operações, ela deseja descobrir quais são os repositórios mais populares de cada empresa que atende, além de comparar os resultados de popularidade entre todos esses clientes.
-
-Compreendendo também que contratos podem ser cancelados, a Vough espera poder apagar os dados anteriormente salvos a respeito de um ex-cliente.
+Com o aumento das demandas surgiu a necessidade de rankear seus atuais e potenciais clientes por um nível de prioridade, de modo a dar preferência a projetos de empresas maiores e mais influentes no meio open source.
 
 ## SOLUÇÃO
 
-Para atender a essa necessidade, você deve desenvolver uma API que apresente os seguintes dados do Github das organizações:
+Para auxiliar a Vough, você deve desenvolver uma API que calcula o valor de prioridade de cada cliente e retorna uma lista de clientes ordenandos por prioridade.
 
-- Nome e slug de cada organização;
-- Um top 3 repositórios de cada organização, contendo seus respectivos nomes, número de issues e de pull requests e a classificação deles.
+Na versão inicial da API, o valor de prioridade é calculado com base em dados encontrados no Github, através da seguinte fórmula:
 
-__Atenção__: a sua aplicação deve obrigatoriamente utilizar a [API Rest do Github](https://docs.github.com/pt/free-pro-team@latest/rest) para coletar as informações referentes às organizações.
+`prioridade = <quantidade de membros públicos da organização no Github> + <quantidade de repositórios públicos da organização no Github>`
 
-A API deverá seguir o seguinte padrão de endpoint:
+Na raiz deste repositório você encontra uma base para o projeto na pasta `vough_backend`. A API foi desenvolvida em Django/Python e seu dever é completar este projeto com as funcionalidades que estão faltando.
+
+Para isso, foram passados alguns requisitos técnicos:
+
+- Deve utilizar a [API Rest do Github](https://docs.github.com/pt/free-pro-team@latest/rest) para coletar as informações referentes às organizações.
+
+- Deve possuir um endpoint para consultar uma organização específica através do nome (`login`):
+
 ```
-/orgs/<nome-org>/
+GET /api/orgs/<login>/
 ```
-Onde `nome-org` é obrigatório para recuperar as infos de uma organização ou deletá-la da base de dados.
 
-Adiante, organizamos em tópicos os principais requisitos esperados em sua aplicação e exemplos de como cumpri-los.
+Esse endpoint deverá apresentar os dados no seguinte formato:
 
-### Recuperar informações da organização
-
-Deve existir um endpoint onde o usuário insira o nome da organização e receba os dados sobre ela. Além disso, deve ser possível filtrar por um intervalo de tempo as informações da organização.
-
-Padrão da _query string_: `?initial_date=YYYY-MM-DD&end_date=YYYY-MM-DD`
-
-Se não for passado o filtro de data, a API deve pegar as informações da organização entre 01/07/2020 e 31/12/2020.
-
-Assim que a primeira consulta a uma organização for realizada, a aplicação deve fazer o cache das informações encontradas na API do Github e salvar em um banco de dados.
-
-Já quando o usuário estiver consultando uma organização pela segunda vez, o filtro de data será ignorado e serão retornados os dados salvos no banco de dados (aqueles que foram salvos na primeira consulta à organização).
-
-Ex.: busca de informações da organização __instruct-br__
 ```
-GET /orgs/instruct-br/?initial_date=2021-01-01&end_date=2021-01-15
 {
-  "name": "Instruct",
-  "slug": "instruct-br",
-  "top_3_repositories": [
-    {
-      "name": "repo_1",
-      "issues_count": 15,
-      "pulls_count": 2,
-      "rating": 1
-    },
-    ...
-  ]
+    "login": "string",
+    "name": "string",
+    "score": int
 }
 ```
 
-Ainda, para definir o top 3 de repositórios, considere que a popularidade de um repositório é definida pelo número de pull requests e pelo número de issues. Os pesos são os seguintes: o pull request tem peso 2 e a issue peso 1 (pulls_count * 2 + issues_count).
+Onde o `score` é o nível de prioridade da organização.
+Em caso de sucesso, o status `200` deverá ser retornado.
+Caso a empresa não seja encontrada, deve retornar o status `404`.
 
-Se a organização consultada não existir no Github, deve retornar um erro.
+- Deve possuir um endpoint para a listagem de todas as organizações já consultadas através da API:
 
-__Atenção__: se o usuário já consultou alguma organização, a aplicação não deve coletar os dados da API do Github, mas sim do banco de dados. Para atualizar as informações da organização, o usuário precisa apagá-las via API e depois efetuar uma nova consulta com o filtro desejado.
-
-### Listar organizações já consultadas
-
-Deve existir um endpoint onde serão listadas todas as organizações já consultadas pelo usuário.
-
-Ex.:
 ```
-GET /orgs/
+GET /api/orgs/
+```
+
+Esse endpoint deverá apresentar os dados no seguinte formato:
+
+```
 [
   {
-    "name": "Instruct",
-    "slug": "instruct-br",
-    "top_3_repositories": [
-      {
-        "name": "repo_1",
-        "issues_count": 15,
-        "pulls_count": 2,
-        "rating": 1
-      },
-      ...
-    ]
-  }
+    "login": "string",
+    "name": "string",
+    "score": int
+  },
+  {
+    "login": "string",
+    "name": "string",
+    "score": int
+  },
   ...
 ]
 ```
 
-### Apagar organização anteriormente consultada
+As organizações listadas aqui devem estar ordenadas pela prioridade (`score`), da maior para a menor.
 
-Deve existir um endpoint onde será possível apagar o cache de uma organização já consultada.
+- Deve possuir um endpoint para a remoção de organizações da listagem:
 
-Ex.:
 ```
-DELETE /orgs/instruct-br/
-{}
+DELETE /api/orgs/<login>/
 ```
 
-Se a organização consultada não existir no banco de dados, deve retornar um erro.
+Em caso de sucesso, o status `204` deverá ser retornado.
+Caso a empresa não seja encontrada, deve retornar o status `404`.
 
 ## AVALIAÇÃO
 
 Inicialmente, nós não iremos olhar o seu código. O projeto será testado de forma automatizada e se ele passar nos testes você receberá um e-mail comunicando que irá para a etapa da entrevista técnica.
 
-Portanto, você deve codificar seu projeto em Python e fazer deploy dele usando os recursos disponibilizados no Frees Tiers da [Heroku](https://www.heroku.com/). Isso significa que sua API deverá rodar num ambiente virtualizado com [512 MB de RAM](https://www.heroku.com/dynos) e um banco de dados PostgreSQL com um [limite de 10.000 linhas](https://elements.heroku.com/addons/heroku-postgresql#pricing).
+Portanto, você deve codificar seu projeto em Python e fazer deploy dele usando os recursos disponibilizados no Frees Tiers da [Heroku](https://www.heroku.com/).
 
 Quando você finalizar a implementação, adicione o usuário com o e-mail jobs@instruct.com.br como colaborador do app publicado até o fim do prazo estipulado. A partir disso, conseguimos o endereço em que sua API está publicada e seguimos com os testes automatizados.
 
@@ -127,7 +104,7 @@ Se a API passar nos testes básicos e não passar nos testes avançados, faremos
 
 Se a API passar pelos testes avançados, você já garantiu a sua participação na próxima etapa do processo — mesmo assim vamos executar os testes extras para avaliar mais alguns pontos da sua solução.
 
-Os testes básicos estão disponíveis neste repositório, no arquivo tests-open.js, e é recomendado que você os use durante o desenvolvimento para avaliar se a sua API está correta. 
+Os testes básicos estão disponíveis neste repositório, no arquivo tests-open.js, e é recomendado que você os use durante o desenvolvimento para avaliar se a sua API está correta.
 
 Como explicado acima, você não passará para a próxima etapa se a sua solução não atender a todos os testes desse arquivo. Use as verificações presentes nele para guiar o desenvolvimento da sua solução.
 
@@ -139,7 +116,9 @@ Exemplo de aplicação rodando no localhost na porta 8000:
 `k6 run -e API_BASE='http://localhost:8000' tests-open.js`
 
 ## RECOMENDAÇÕES
-- Use Python >= 3.6
+
+- Use Docker
+- Use Python >= 3.7
 - Siga a PEP-8.
 - Use Git.
 - [Escreva mensagens claras no Git](https://www.git-tower.com/learn/git/ebook/en/command-line/appendix/best-practices).
