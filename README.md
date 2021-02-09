@@ -117,7 +117,6 @@ Exemplo de aplicação rodando no localhost na porta 8000:
 
 ## RECOMENDAÇÕES
 
-- Use Docker
 - Use Python >= 3.7
 - Siga a PEP-8.
 - Use Git.
