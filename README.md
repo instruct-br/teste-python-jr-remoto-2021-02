@@ -113,7 +113,7 @@ Você pode executar esses testes com o [k6](https://k6.io/). Para instalar o k6 
 E para rodar os testes abertos, especifique a variável de ambiente "API_BASE" com o endereço base da API testada.
 
 Exemplo de aplicação rodando no localhost na porta 8000:
-`k6 run -e API_BASE='http://localhost:8000' tests-open.js`
+`k6 run -e API_BASE='http://localhost:8000/' tests-open.js`
 
 ## RECOMENDAÇÕES
 
